@@ -86,20 +86,19 @@ class Modelo():
             if i!=1:
                 self.mdl.add_constraint(self.u[i]-self.u[j] + ins.M*self.x[(i,j)] <= ins.M - ins.c[(i,j)], ctname = "restriccion4: x_%d_%d" %(i,j))
 
-        # # Restricción 5: Ventanas de Tiempo
-        # for i in ins.V:
-        #     self.mdl.add_constraints([ins.a[i] <= self.u[i] ,self.u[i] <= ins.b[i]])
-        print(self.mdl.pprint_as_string())
+        # Restricción 5: Ventanas de Tiempo
+        for i in ins.V:
+            self.mdl.add_constraints([ins.a[i] <= self.u[i] ,self.u[i] <= ins.b[i]])
+
+        # print(self.mdl.pprint_as_string())
 
     def solve(self):
         self.solucion = self.mdl.solve(log_output= True)
 
         print(self.mdl.get_solve_status())
-        
+        print(self.solucion)
         self.arcos_solucion = [i for i in ins.arcos if self.x[i].solution_value>0.9]
 
-    def result(self):
-        print(self.solucion)
 
 
     def plot(self,ins):
@@ -132,4 +131,3 @@ modelo = Modelo()
 modelo.build(ins)
 modelo.solve()
 modelo.plot(ins)
-#modelo.result()
