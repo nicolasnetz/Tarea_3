@@ -51,7 +51,7 @@ class Instancia:
         self.arcos = [(i,j) for i in self.V for j in self.V if i!=j]
         self.a = {i: instance_data[:,4][i-1] for i in self.V}
         self.b = {i: instance_data[:,5][i-1] for i in self.V}
-        self.c = {(i,j): int(np.hypot(self.coord_x[i-1] - self.coord_x[j-1] , self.coord_y[i-1] - self.coord_y[j-1])) for i,j in self.arcos}
+        self.c = {(i,j): np.round(np.hypot(self.coord_x[i-1] - self.coord_x[j-1] , self.coord_y[i-1] - self.coord_y[j-1])) for i,j in self.arcos}
         
         
 
@@ -98,7 +98,7 @@ class Modelo():
         print(self.mdl.get_solve_status())
         print(self.solucion)
         self.arcos_solucion = [i for i in ins.arcos if self.x[i].solution_value>0.9]
-
+        print(self.arcos_solucion)
 
 
     def plot(self,ins):
@@ -106,10 +106,10 @@ class Modelo():
         for i in range(len(ins.V)):
             if i!=0:
                 ax.scatter(ins.coord_x[i],ins.coord_y[i],300,color="black",marker = 's',zorder=2)
-                ax.annotate(str(i),xy=(ins.coord_x[i],ins.coord_y[i]),xytext=(ins.coord_x[i]-0.5,ins.coord_y[i]-0.5), color="white")
+                ax.annotate(str(i +1),xy=(ins.coord_x[i],ins.coord_y[i]),xytext=(ins.coord_x[i]-0.5,ins.coord_y[i]-0.5), color="white")
             else:
                 ax.scatter(ins.coord_x[i],ins.coord_y[i],300,color="red",marker = 's',label='Depósito',zorder=2)
-                ax.annotate(str(0),xy=(ins.coord_x[i],ins.coord_y[i]),xytext=(ins.coord_x[i]-0.5,ins.coord_y[i]-0.5), color="white")
+                ax.annotate(str(i + 1),xy=(ins.coord_x[i],ins.coord_y[i]),xytext=(ins.coord_x[i]-0.5,ins.coord_y[i]-0.5), color="white")
 
         for i,j in self.arcos_solucion:
             plt.plot([ins.coord_x[i-1],ins.coord_x[j-1]],[ins.coord_y[i-1],ins.coord_y[j-1]],color='black',zorder=1)
@@ -126,7 +126,7 @@ class Modelo():
         plt.show()
 
 
-ins = Instancia()
+ins = Instancia("instancias/n20w200.001.txt")
 modelo = Modelo()
 modelo.build(ins)
 modelo.solve()
